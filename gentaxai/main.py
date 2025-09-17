@@ -11,10 +11,10 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
-# ✅ FIX: absolute import
+# ✅ Absolute import
 from gentaxai.knowledge import retrieve
 
-# Load env
+# Load environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
@@ -22,7 +22,7 @@ GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY not found in environment variables")
 
-# ✅ Removed proxies arg (not supported anymore)
+# ✅ Initialize ChatGroq
 llm = ChatGroq(
     api_key=GROQ_API_KEY,
     model=GROQ_MODEL,
@@ -30,21 +30,29 @@ llm = ChatGroq(
     max_tokens=800,
 )
 
+# FastAPI app
 app = FastAPI(title="GenTaxAI Chatbot", description="AI-powered Indian Tax Assistant")
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Load or initialize conversation sessions
 SESSIONS_FILE = "sessions.json"
 if os.path.exists(SESSIONS_FILE):
-    with open(SESSIONS_FILE, "r", encoding="utf-8") as f:
-        CONVERSATIONS: Dict[str, List[Dict[str, str]]] = json.load(f)
+    try:
+        with open(SESSIONS_FILE, "r", encoding="utf-8") as f:
+            CONVERSATIONS: Dict[str, List[Dict[str, str]]] = json.load(f)
+    except json.JSONDecodeError:
+        CONVERSATIONS = {}
 else:
     CONVERSATIONS: Dict[str, List[Dict[str, str]]] = {}
 
 def save_sessions():
-    with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
-        json.dump(CONVERSATIONS, f, indent=2, ensure_ascii=False)
+    try:
+        with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
+            json.dump(CONVERSATIONS, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print("Error saving sessions:", e)
 
+# Request/response models
 class ChatQuery(BaseModel):
     question: str
     session_id: Optional[str] = None
@@ -80,6 +88,7 @@ def to_langchain_messages(history: List[Dict[str, str]]):
             msgs.append(AIMessage(content=msg["content"]))
     return msgs
 
+# Routes
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     index_path = os.path.join("static", "index.html")
@@ -98,6 +107,7 @@ async def chat_endpoint(query: ChatQuery):
     if session_id not in CONVERSATIONS:
         CONVERSATIONS[session_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
+    # Retrieve relevant KB snippets
     try:
         kb_hits = retrieve(question, k=5) or []
     except Exception as e:
@@ -114,13 +124,14 @@ async def chat_endpoint(query: ChatQuery):
             tag = f"[{i}] {source}#chunk{chunk_id}"
             context_texts.append(f"{tag}\n{text}")
             citations_payload.append({"id": str(i), "source": source, "chunk_id": chunk_id})
-
         context_block = "CONTEXT:\n" + "\n\n".join(context_texts)
         CONVERSATIONS[session_id].append({"role": "assistant", "content": context_block})
 
+    # Add user question
     CONVERSATIONS[session_id].append({"role": "user", "content": question})
     lc_messages = to_langchain_messages(CONVERSATIONS[session_id])
 
+    # Generate response
     try:
         response = llm.invoke(lc_messages)
         answer = response.content
@@ -141,12 +152,15 @@ def new_session():
 def health_check():
     return {"status": "healthy", "service": "GenTaxAI Chatbot"}
 
+# Run app for local dev (Render will auto-detect `app`)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "gentaxai.main:app",  # ✅ important
+        "gentaxai.main:app",  # ✅ required for deployment
         host=os.getenv("HOST", "0.0.0.0"),
         port=int(os.getenv("PORT", 8000)),
-        reload=True,
+        reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
+
 
