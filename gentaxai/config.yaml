@@ -1,0 +1,22 @@
+paths:
+  raw: data_raw
+  processed: data_processed
+
+files:
+  income_tax:
+    - income-tax-act-1961-as-amended-by-finance-act-2025.pdf
+    - income_tax_guide_pdf.pdf
+
+  gst:
+    - gst faq.pdf
+    - 01_Beginners-guide-to-GST-15022024.pdf
+
+  rbi:
+    - rbi master circular.pdf
+
+  msme:
+    - MSME_Schemes_English_0.pdf
+    - msme INVESTMENT GUIDE.pdf
+
+  sebi:
+    - sebi regulations_merged.pdf

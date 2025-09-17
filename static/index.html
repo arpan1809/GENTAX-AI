@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenTaxAI - Your Indian Tax Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>GenTaxAI</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="new-chat-btn" id="newChatBtn">
+                        <i class="fas fa-plus"></i>
+                        New Chat
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>Welcome to GenTaxAI</h2>
+                    <p>Your intelligent Indian tax assistant powered by AI. Ask me anything about Income Tax, GST, tax planning, and more!</p>
+                    
+                    <div class="sample-questions">
+                        <h3>Try asking:</h3>
+                        <div class="sample-grid">
+                            <button class="sample-btn" data-question="What are the income tax slabs for AY 2024-25?">
+                                <i class="fas fa-percentage"></i>
+                                Income Tax Slabs
+                            </button>
+                            <button class="sample-btn" data-question="How to calculate GST for my business?">
+                                <i class="fas fa-business-time"></i>
+                                GST Calculation
+                            </button>
+                            <button class="sample-btn" data-question="What deductions can I claim under Section 80C?">
+                                <i class="fas fa-receipt"></i>
+                                Tax Deductions
+                            </button>
+                            <button class="sample-btn" data-question="When is the deadline for filing ITR?">
+                                <i class="fas fa-calendar-alt"></i>
+                                Filing Deadlines
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="chat-interface" id="chatInterface" style="display: none;">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="typing-bubble">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput"
+                        maxlength="1000"
+                        placeholder="Ask me anything about Indian taxes..."
+                    ></textarea>
+                    <button id="sendBtn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <span id="charCounter">0/1000</span>
+                </div>
+            </div>
+        </div>
+    </div> <!-- closes .app-container -->
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing your question...</p>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="error-toast" id="errorToast" style="display: none;">
+        <div class="error-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage">Something went wrong. Please try again.</span>
+        </div>
+    </div>
+</div> <!-- closes .app-container -->
+
+<script src="/static/js/script.js"></script>
+</body>
+</html>
