@@ -8,14 +8,13 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-
 from langchain_groq import ChatGroq
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
+# ✅ FIX: absolute import
+from gentaxai.knowledge import retrieve
 
-from .knowledge import retrieve
-
-
+# Load env
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
@@ -23,7 +22,7 @@ GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY not found in environment variables")
 
-
+# ✅ Removed proxies arg (not supported anymore)
 llm = ChatGroq(
     api_key=GROQ_API_KEY,
     model=GROQ_MODEL,
@@ -31,12 +30,9 @@ llm = ChatGroq(
     max_tokens=800,
 )
 
-
 app = FastAPI(title="GenTaxAI Chatbot", description="AI-powered Indian Tax Assistant")
 
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 SESSIONS_FILE = "sessions.json"
 if os.path.exists(SESSIONS_FILE):
@@ -48,7 +44,6 @@ else:
 def save_sessions():
     with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
         json.dump(CONVERSATIONS, f, indent=2, ensure_ascii=False)
-
 
 class ChatQuery(BaseModel):
     question: str
@@ -63,7 +58,6 @@ class SessionResponse(BaseModel):
     session_id: str
     message: str
 
-
 SYSTEM_PROMPT = (
     "You are GenTaxAI, a precise and helpful Indian tax assistant.\n"
     "You specialize in Indian taxation including Income Tax, GST, MSME, RBI, SEBI and related compliance.\n"
@@ -73,7 +67,6 @@ SYSTEM_PROMPT = (
     "Always prefer official wording in the snippets when giving definitions or rules.\n"
     "Keep responses concise but comprehensive."
 )
-
 
 def to_langchain_messages(history: List[Dict[str, str]]):
     msgs = []
@@ -86,7 +79,6 @@ def to_langchain_messages(history: List[Dict[str, str]]):
         elif role == "assistant":
             msgs.append(AIMessage(content=msg["content"]))
     return msgs
-
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
@@ -106,7 +98,6 @@ async def chat_endpoint(query: ChatQuery):
     if session_id not in CONVERSATIONS:
         CONVERSATIONS[session_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    
     try:
         kb_hits = retrieve(question, k=5) or []
     except Exception as e:
@@ -127,20 +118,15 @@ async def chat_endpoint(query: ChatQuery):
         context_block = "CONTEXT:\n" + "\n\n".join(context_texts)
         CONVERSATIONS[session_id].append({"role": "assistant", "content": context_block})
 
-   
     CONVERSATIONS[session_id].append({"role": "user", "content": question})
-
-    
     lc_messages = to_langchain_messages(CONVERSATIONS[session_id])
 
-    
     try:
         response = llm.invoke(lc_messages)
         answer = response.content
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM error: {str(e)}")
 
-    
     CONVERSATIONS[session_id].append({"role": "assistant", "content": answer})
     save_sessions()
 
@@ -158,7 +144,9 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        app,
+        "gentaxai.main:app",  # ✅ important
         host=os.getenv("HOST", "0.0.0.0"),
         port=int(os.getenv("PORT", 8000)),
+        reload=True,
     )
+
