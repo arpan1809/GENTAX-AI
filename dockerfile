@@ -42,3 +42,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Run the FastAPI app
 # main.py starts uvicorn in __main__, but we prefer explicit uvicorn entrypoint
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
