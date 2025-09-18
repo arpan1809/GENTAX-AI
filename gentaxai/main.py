@@ -24,7 +24,7 @@ if not GROQ_API_KEY:
 
 # ✅ Initialize ChatGroq
 llm = ChatGroq(
-    api_key=GROQ_API_KEY,
+    groq_api_key=GROQ_API_KEY,
     model=GROQ_MODEL,
     temperature=0.2,
     max_tokens=800,
@@ -161,6 +161,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
