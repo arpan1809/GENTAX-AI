@@ -6,7 +6,7 @@ langchain==0.2.16
 langchain-core==0.2.38
 langchain-community==0.2.16
 langchain-groq==0.1.5
-groq==0.4.1
+groq==0.4.2
 python-dotenv==1.0.0
 python-multipart==0.0.6
 typing-extensions==4.12.2
