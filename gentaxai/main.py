@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
-# ✅ Absolute import
+
 from gentaxai.knowledge import retrieve
 
 # Load environment variables
@@ -161,6 +161,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
