@@ -14,7 +14,7 @@ from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
 from gentaxai.knowledge import retrieve
 
-# Load environment variables
+
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
@@ -161,6 +161,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
