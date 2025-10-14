@@ -22,7 +22,6 @@ GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY not found in environment variables")
 
-# ✅ Initialize ChatGroq
 llm = ChatGroq(
     groq_api_key=GROQ_API_KEY,
     model=GROQ_MODEL,
@@ -30,11 +29,11 @@ llm = ChatGroq(
     max_tokens=800,
 )
 
-# FastAPI app
+
 app = FastAPI(title="GenTaxAI Chatbot", description="AI-powered Indian Tax Assistant")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Load or initialize conversation sessions
+
 SESSIONS_FILE = "sessions.json"
 if os.path.exists(SESSIONS_FILE):
     try:
@@ -161,6 +160,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
