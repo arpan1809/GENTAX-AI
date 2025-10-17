@@ -51,7 +51,7 @@ def save_sessions():
     except Exception as e:
         print("Error saving sessions:", e)
 
-# Request/response models
+
 class ChatQuery(BaseModel):
     question: str
     session_id: Optional[str] = None
@@ -159,6 +159,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
