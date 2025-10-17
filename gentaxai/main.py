@@ -106,7 +106,6 @@ async def chat_endpoint(query: ChatQuery):
     if session_id not in CONVERSATIONS:
         CONVERSATIONS[session_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    # Retrieve relevant KB snippets
     try:
         kb_hits = retrieve(question, k=5) or []
     except Exception as e:
@@ -160,6 +159,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
