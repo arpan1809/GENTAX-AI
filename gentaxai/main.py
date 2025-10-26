@@ -125,7 +125,7 @@ async def chat_endpoint(query: ChatQuery):
         context_block = "CONTEXT:\n" + "\n\n".join(context_texts)
         CONVERSATIONS[session_id].append({"role": "assistant", "content": context_block})
 
-    # Add user question
+    
     CONVERSATIONS[session_id].append({"role": "user", "content": question})
     lc_messages = to_langchain_messages(CONVERSATIONS[session_id])
 
@@ -159,6 +159,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
