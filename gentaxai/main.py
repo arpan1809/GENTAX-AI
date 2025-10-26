@@ -128,7 +128,7 @@ async def chat_endpoint(query: ChatQuery):
     CONVERSATIONS[session_id].append({"role": "user", "content": question})
     lc_messages = to_langchain_messages(CONVERSATIONS[session_id])
 
-    # Generate response
+  
     try:
         response = llm.invoke(lc_messages)
         answer = response.content
@@ -158,6 +158,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
