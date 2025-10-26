@@ -87,7 +87,6 @@ def to_langchain_messages(history: List[Dict[str, str]]):
             msgs.append(AIMessage(content=msg["content"]))
     return msgs
 
-# Routes
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     index_path = os.path.join("static", "index.html")
@@ -159,6 +158,7 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", 8000)),
         reload=os.getenv("ENV", "dev") == "dev",  # only reload in dev
     )
+
 
 
 
