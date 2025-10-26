@@ -28,7 +28,7 @@ def combine_pages(file_path: Path):
 if __name__ == "__main__":
     total_domains = 0
     for file_path in tqdm(list(CLEAN_DIR.glob("*.jsonl")), desc="Structuring domains"):
-        domain_name = file_path.stem.split("__")[0]  # e.g., income_tax__filename -> income_tax
+        domain_name = file_path.stem.split("__")[0]  
         log(f"Processing domain: {domain_name}")
 
         # Combine pages into one text
@@ -54,3 +54,4 @@ if __name__ == "__main__":
         total_domains += 1
 
     log(f"=== Structuring complete. Total domains: {total_domains} ===")
+
