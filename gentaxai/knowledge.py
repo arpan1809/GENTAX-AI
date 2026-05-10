@@ -6,7 +6,6 @@ from functools import lru_cache
 
 KB_DIR = os.path.join(os.getcwd(), "knowledge_base")
 
-# Basic cleaner
 def _clean(text: str) -> str:
     text = text.replace("\u00a0", " ").replace("\n", " ").replace("\t", " ")
     text = re.sub(r"\s+", " ", text).strip()
@@ -37,7 +36,7 @@ def _score(query_tokens: List[str], doc_tokens: List[str]) -> float:
         doc_freq[t] = doc_freq.get(t, 0) + 1
     for qt in query_tokens:
         score += doc_freq.get(qt, 0)
-    # length normalization
+  
     score = score / (1.0 + len(doc_tokens) / 5000.0)
     return score
 
@@ -58,13 +57,13 @@ def load_kb() -> List[Dict]:
             print(f"Skipping non-UTF8 file: {fname}")
             continue
         except Exception:
-            # Sometimes these are large JSON objects with "text" key, or raw arrays
+            
             try:
                 with open(path, "r", encoding="utf-8") as f:
                     raw = f.read()
                 data = json.loads(raw)
             except Exception:
-                # As a last resort, treat the whole file as text
+               
                 try:
                     with open(path, "r", encoding="utf-8") as f:
                         text = f.read()
@@ -77,7 +76,7 @@ def load_kb() -> List[Dict]:
         if isinstance(data, dict) and "text" in data:
             corpus_text = str(data["text"])
         else:
-            # flatten best-effort
+            
             corpus_text = _clean(json.dumps(data, ensure_ascii=False))
 
         corpus_text = _clean(corpus_text)
@@ -103,6 +102,6 @@ def retrieve(query: str, k: int = 5, min_chars: int = 250) -> List[Dict]:
             scored.append((s, item))
     scored.sort(key=lambda x: x[0], reverse=True)
     top = [it for _, it in scored[:max(1, k)]]
-    # filter out too-short chunks unless needed
+    
     filtered = [t for t in top if len(t["text"]) >= min_chars]
     return filtered if filtered else top[:k]

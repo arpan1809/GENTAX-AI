@@ -18,12 +18,11 @@ ensure_dir(CLEAN_DIR)
 
 def clean_text(text: str) -> str:
     """Normalize extracted PDF text"""
-    # Remove multiple spaces & tabs
+  
     text = re.sub(r"\s+", " ", text)
-    # Remove page headers/footers if any patterns are known
-    # e.g., remove lines like "Page 1 of 10"
+  
     text = re.sub(r"Page \d+ of \d+", "", text, flags=re.IGNORECASE)
-    # Strip leading/trailing spaces
+    
     text = text.strip()
     return text
 
@@ -33,7 +32,7 @@ def process_file(file_path: Path):
         for line in f:
             rec = json.loads(line)
             text = rec.get("text", "")
-            if text.strip():  # skip completely empty pages
+            if text.strip():  
                 rec["text"] = clean_text(text)
                 out_records.append(rec)
     return out_records

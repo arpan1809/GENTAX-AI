@@ -1,1 +1,0 @@
-# GENTAX-AI
